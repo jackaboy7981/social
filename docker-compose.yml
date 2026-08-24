@@ -1,4 +1,21 @@
 services:
+  db:
+    image: postgres:16-alpine
+    container_name: social-db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: social
+      POSTGRES_PASSWORD: social
+      POSTGRES_DB: social
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U social -d social"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   backend:
     build:
       context: ./backend
@@ -7,6 +24,11 @@ services:
       - "5678:5678"
     volumes:
       - ./backend:/app
+    environment:
+      DATABASE_URL: postgresql+psycopg://social:social@db:5432/social
+    depends_on:
+      db:
+        condition: service_healthy
     command: >
       python -m debugpy
       --listen 0.0.0.0:5678
@@ -23,3 +45,6 @@ services:
       - "8080:80"
     depends_on:
       - backend
+
+volumes:
+  postgres_data:
