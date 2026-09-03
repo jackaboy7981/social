@@ -6,6 +6,12 @@ from sqlalchemy import pool
 
 from alembic import context
 
+# add your model's MetaData object here
+# for 'autogenerate' support
+from app.db.base import Base
+from app.modules.auth.models import auth_models  # noqa: F401
+from app.modules.users.models import users_models  # noqa: F401
+
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
@@ -18,19 +24,16 @@ if config.config_file_name is not None:
 # Overrides the placeholder sqlalchemy.url in alembic.ini at runtime.
 # Inside docker-compose, DATABASE_URL is set to point at the "db" service.
 # Outside docker (running alembic straight from your machine), it falls back
-# to localhost, since docker-compose publishes postgres on localhost:5432.
+# to localhost:5433, since docker-compose publishes postgres there (5433->5432,
 config.set_main_option(
     "sqlalchemy.url",
     os.environ.get(
-        "DATABASE_URL", "postgresql+psycopg://social:social@localhost:5432/social"
+        "DATABASE_URL", "postgresql+psycopg://social:social@localhost:5433/social"
     ),
 )
 
-# add your model's MetaData object here
-# for 'autogenerate' support
-# from myapp import mymodel
-# target_metadata = mymodel.Base.metadata
-target_metadata = None
+
+target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
