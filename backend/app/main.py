@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 
-from app.modules.auth.controller.auth_controller import router as auth_router
+from app.core.router import register_routes
+from app.core.handler import register_error_handlers
 
 app = FastAPI()
 
@@ -10,4 +11,5 @@ async def health():
     return {"status": "ok"}
 
 
-app.include_router(auth_router)
+register_routes(app)
+register_error_handlers(app)

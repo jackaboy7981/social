@@ -36,6 +36,7 @@ def upgrade() -> None:
         sa.Column("ref_id", sa.UUID(), nullable=False),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("email"),
+        sa.UniqueConstraint("phone_no"),
         sa.UniqueConstraint("ref_id"),
         sa.UniqueConstraint("username"),
     )

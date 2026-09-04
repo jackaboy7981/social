@@ -6,6 +6,7 @@ from fastapi.responses import JSONResponse
 
 from app.modules.auth.schemas.auth_schemas import LoginRequest, RegisterRequest
 from app.modules.auth.services import auth_service
+from app.modules.auth.utils import auth_utils
 
 router = APIRouter(prefix="/v1/auth")
 
@@ -25,6 +26,8 @@ async def login(request: LoginRequest):
 # Returns { id, ref_id } of the created user.
 @router.post("/register")
 async def register(request: Annotated[RegisterRequest, Form()]):
+    auth_utils.validate_email(request.email)
+
     result = await auth_service.register(
         request.email,
         request.username,
